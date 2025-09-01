@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Paschoalotto.People.Api.Contracts;
 using Paschoalotto.People.Api.Contracts.Responses;
 using Paschoalotto.People.Application.Abstractions;
@@ -11,6 +12,7 @@ namespace Paschoalotto.People.Api.Controllers.V1;
 [ApiController]
 [Route("api/v1")]
 [Produces("application/json")]
+[Authorize]
 public sealed class PeopleController : ControllerBase
 {
     private readonly IPersonWriteRepository _write;
