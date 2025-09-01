@@ -6,6 +6,7 @@ using Paschoalotto.People.Application.Abstractions.Repositories;
 using Paschoalotto.People.Infrastructure;
 using Paschoalotto.People.Infrastructure.Persistence;
 using Paschoalotto.People.Infrastructure.Repositories;
+using Paschoalotto.People.Infrastructure.Storage;
 
 namespace Paschoalotto.People.CrossCutting;
 
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IPersonReadRepository, PersonReadRepository>();
         services.AddScoped<IPersonWriteRepository, PersonWriteRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<IFileStorageService, FileSystemStorageService>();
 
         return services;
     }

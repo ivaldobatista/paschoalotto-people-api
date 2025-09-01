@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using Paschoalotto.People.Domain.Common;
+﻿using Paschoalotto.People.Domain.Common;
+using System.Text.RegularExpressions;
 
 
 namespace Paschoalotto.People.Domain.People.ValueObjects;

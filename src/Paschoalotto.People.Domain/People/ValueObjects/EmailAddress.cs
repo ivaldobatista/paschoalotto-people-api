@@ -1,6 +1,6 @@
 ﻿
-using System.Net.Mail;
 using Paschoalotto.People.Domain.Common;
+using System.Net.Mail;
 
 
 namespace Paschoalotto.People.Domain.People.ValueObjects;

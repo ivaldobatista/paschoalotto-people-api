@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Paschoalotto.People.Application.Abstractions.Repositories;
 using Paschoalotto.People.Domain.People;
 using Paschoalotto.People.Infrastructure.Persistence;
-using Paschoalotto.People.Application.Abstractions.Repositories;
 
 namespace Paschoalotto.People.Infrastructure.Repositories;
 
