@@ -34,6 +34,4 @@ public sealed class CreateLegalEntityRequest
     [Required]
     public AddressDto Address { get; set; } = null!;
 
-    [MaxLength(255)]
-    public string? LogoPath { get; set; }
 }

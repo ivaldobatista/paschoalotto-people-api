@@ -15,7 +15,7 @@ public sealed class Individual : Person
 
     public Individual(
         string fullName, Cpf cpf, DateTime birthDate, GenderType gender,
-        EmailAddress email, PhoneNumber phone, Address address, string? photoPath)
+        EmailAddress email, PhoneNumber phone, Address address)
     {
         FullName = fullName;
         Cpf = cpf;
@@ -24,7 +24,6 @@ public sealed class Individual : Person
         Email = email;
         Phone = phone;
         Address = address;
-        PhotoPath = photoPath;
     }
 
     public void UpdatePhoto(string? path)

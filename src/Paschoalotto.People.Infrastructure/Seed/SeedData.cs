@@ -18,8 +18,7 @@ public static class SeedData
                 gender: GenderType.Female,
                 email: new EmailAddress("maria.silva@example.com"),
                 phone: new PhoneNumber("+5561999990001"),
-                address: new Address("Rua A", "10", null, "Centro", "Brasília", "DF", "70000-000", "Brasil"),
-                photoPath: null
+                address: new Address("Rua A", "10", null, "Centro", "Brasília", "DF", "70000-000", "Brasil")
             ));
         }
 
@@ -35,8 +34,7 @@ public static class SeedData
                 legalRepCpf: new Cpf("987.654.321-00"),
                 email: new EmailAddress("contato@acme.com"),
                 phone: new PhoneNumber("+5561999990002"),
-                address: new Address("Av. B", "100", "Sala 3", "Asa Sul", "Brasília", "DF", "70000-100", "Brasil"),
-                logoPath: null
+                address: new Address("Av. B", "100", "Sala 3", "Asa Sul", "Brasília", "DF", "70000-100", "Brasil")
             ));
         }
 

@@ -20,4 +20,5 @@ public sealed class IndividualResponse
     public string ZipCode { get; set; } = null!;
     public string Country { get; set; } = null!;
     public string? PhotoPath { get; set; }
+    public string? PhotoUrl { get; set; }
 }

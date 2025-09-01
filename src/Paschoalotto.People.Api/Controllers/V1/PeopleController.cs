@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Paschoalotto.People.Api.Contracts;
 using Paschoalotto.People.Api.Contracts.Responses;
 using Paschoalotto.People.Application.Abstractions;
@@ -18,17 +17,19 @@ public sealed class PeopleController : ControllerBase
     private readonly IPersonReadRepository _read;
     private readonly IUnitOfWork _uow;
     private readonly ILogger<PeopleController> _logger;
-
+    private readonly IFileStorageService _storage;
     public PeopleController(
         IPersonWriteRepository write,
         IPersonReadRepository read,
         IUnitOfWork uow,
+        IFileStorageService storageService,
         ILogger<PeopleController> logger)
     {
         _write = write;
         _read = read;
         _uow = uow;
         _logger = logger;
+        _storage = storageService;
     }
 
     // === POST /api/v1/individuals
@@ -52,8 +53,7 @@ public sealed class PeopleController : ControllerBase
                 address: new Address(
                     req.Address.Street, req.Address.Number, req.Address.Complement,
                     req.Address.District, req.Address.City, req.Address.State,
-                    req.Address.ZipCode, req.Address.Country),
-                photoPath: req.PhotoPath
+                    req.Address.ZipCode, req.Address.Country)
             );
 
             await _write.AddIndividualAsync(entity, ct);
@@ -118,8 +118,7 @@ public sealed class PeopleController : ControllerBase
                 address: new Address(
                     req.Address.Street, req.Address.Number, req.Address.Complement,
                     req.Address.District, req.Address.City, req.Address.State,
-                    req.Address.ZipCode, req.Address.Country),
-                logoPath: req.LogoPath
+                    req.Address.ZipCode, req.Address.Country)
             );
 
             await _write.AddLegalEntityAsync(entity, ct);
@@ -169,6 +168,7 @@ public sealed class PeopleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
     {
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
         var person = await _read.GetByIdAsync(id, ct);
         if (person is null) return NotFound();
 
@@ -191,7 +191,8 @@ public sealed class PeopleController : ControllerBase
                 State = i.Address.State,
                 ZipCode = i.Address.ZipCode,
                 Country = i.Address.Country,
-                PhotoPath = i.PhotoPath
+                PhotoPath = i.PhotoPath,
+                PhotoUrl = string.IsNullOrEmpty(i.PhotoPath) ? null : $"{baseUrl}/files/{i.PhotoPath}"
             };
             return Ok(resp);
         }
@@ -218,7 +219,8 @@ public sealed class PeopleController : ControllerBase
                 State = j.Address.State,
                 ZipCode = j.Address.ZipCode,
                 Country = j.Address.Country,
-                LogoPath = j.LogoPath
+                LogoPath = j.LogoPath,
+                LogoUrl = string.IsNullOrEmpty(j.LogoPath) ? null : $"{baseUrl}/files/{j.LogoPath}"
             };
             return Ok(resp);
         }
@@ -262,4 +264,51 @@ public sealed class PeopleController : ControllerBase
 
         return Ok(list);
     }
+
+    [HttpPost("individuals/{id:guid}/photo")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UploadIndividualPhoto([FromRoute] Guid id, IFormFile file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(new { error = "Arquivo de foto é obrigatório." });
+
+        var ext = Path.GetExtension(file.FileName);
+        await using var stream = file.OpenReadStream();
+        var relPath = await _storage.SaveAsync(stream, ext, "photos", $"individual-{id}", ct);
+
+        var updated = await _write.UpdateIndividualPhotoAsync(id, relPath, ct); 
+        if (!updated) return NotFound(new { error = "Pessoa física não encontrada." });
+
+        await _uow.SaveChangesAsync(ct);
+
+        var photoUrl = $"{Request.Scheme}://{Request.Host}/files/{relPath}";
+        Response.Headers.Location = photoUrl;
+        return NoContent();
+    }
+
+    [HttpPost("legal-entities/{id:guid}/logo")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UploadLegalEntityLogo([FromRoute] Guid id, IFormFile file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(new { error = "Arquivo de logotipo é obrigatório." });
+
+        var ext = Path.GetExtension(file.FileName);
+        await using var stream = file.OpenReadStream();
+        var relPath = await _storage.SaveAsync(stream, ext, "logos", $"legal-{id}", ct);
+
+        var updated = await _write.UpdateLegalEntityLogoAsync(id, relPath, ct); 
+        if (!updated) return NotFound(new { error = "Pessoa jurídica não encontrada." });
+
+        await _uow.SaveChangesAsync(ct);
+
+        var logoUrl = $"{Request.Scheme}://{Request.Host}/files/{relPath}";
+        Response.Headers.Location = logoUrl;
+        return NoContent();
+    }
+
 }

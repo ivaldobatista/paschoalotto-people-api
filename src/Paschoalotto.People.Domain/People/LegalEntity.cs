@@ -19,7 +19,7 @@ public sealed class LegalEntity : Person
         string corporateName, string tradeName, Cnpj cnpj,
         string? stateRegistration, string? municipalRegistration,
         string legalRepName, Cpf legalRepCpf,
-        EmailAddress email, PhoneNumber phone, Address address, string? logoPath)
+        EmailAddress email, PhoneNumber phone, Address address)
     {
         CorporateName = corporateName;
         TradeName = tradeName;
@@ -31,7 +31,6 @@ public sealed class LegalEntity : Person
         Email = email;
         Phone = phone;
         Address = address;
-        LogoPath = logoPath;
     }
 
     public void UpdateLogo(string? path)

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Paschoalotto.People.Domain.People.Enums; 
+﻿using Paschoalotto.People.Domain.People.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Paschoalotto.People.Api.Contracts;
 
@@ -26,6 +26,4 @@ public sealed class CreateIndividualRequest
     [Required]
     public AddressDto Address { get; set; } = null!;
 
-    [MaxLength(255)]
-    public string? PhotoPath { get; set; }
 }

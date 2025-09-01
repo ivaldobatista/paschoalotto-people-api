@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Paschoalotto.People.CrossCutting;
 using Paschoalotto.People.Infrastructure.Persistence;
@@ -16,6 +17,11 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddPeoplePlatform(builder.Configuration);
 
+var storageRoot = builder.Configuration["Storage:Root"] ?? "./_storage";
+var physicalPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, storageRoot));
+Directory.CreateDirectory(physicalPath);
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -23,6 +29,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(physicalPath),
+    RequestPath = "/files",
+    ServeUnknownFileTypes = false
+});
 
 app.UseHttpsRedirection();
 

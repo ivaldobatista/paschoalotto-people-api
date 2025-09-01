@@ -21,4 +21,5 @@ public sealed class LegalEntityResponse
     public string ZipCode { get; set; } = null!;
     public string Country { get; set; } = null!;
     public string? LogoPath { get; set; }
+    public string? LogoUrl { get; set; }
 }
