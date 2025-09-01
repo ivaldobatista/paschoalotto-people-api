@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Paschoalotto.People.Application\Paschoalotto.People.Application.csproj" />
+    <ProjectReference Include="..\..\src\Paschoalotto.People.Domain\Paschoalotto.People.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

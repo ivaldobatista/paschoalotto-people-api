@@ -278,7 +278,7 @@ public sealed class PeopleController : ControllerBase
         await using var stream = file.OpenReadStream();
         var relPath = await _storage.SaveAsync(stream, ext, "photos", $"individual-{id}", ct);
 
-        var updated = await _write.UpdateIndividualPhotoAsync(id, relPath, ct); 
+        var updated = await _write.UpdateIndividualPhotoAsync(id, relPath, ct);
         if (!updated) return NotFound(new { error = "Pessoa física não encontrada." });
 
         await _uow.SaveChangesAsync(ct);
@@ -301,7 +301,7 @@ public sealed class PeopleController : ControllerBase
         await using var stream = file.OpenReadStream();
         var relPath = await _storage.SaveAsync(stream, ext, "logos", $"legal-{id}", ct);
 
-        var updated = await _write.UpdateLegalEntityLogoAsync(id, relPath, ct); 
+        var updated = await _write.UpdateLegalEntityLogoAsync(id, relPath, ct);
         if (!updated) return NotFound(new { error = "Pessoa jurídica não encontrada." });
 
         await _uow.SaveChangesAsync(ct);

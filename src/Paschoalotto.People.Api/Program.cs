@@ -51,3 +51,5 @@ using (var scope = app.Services.CreateScope())
     await SeedData.ApplyAsync(db);
 }
 app.Run();
+
+public partial class Program { }

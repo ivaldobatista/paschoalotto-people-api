@@ -15,7 +15,6 @@ public sealed class PhoneNumber : ValueObject
         if (string.IsNullOrWhiteSpace(digits))
             throw new ArgumentException("Phone é obrigatório.", nameof(value));
 
-        // Para PoC aceitamos dígitos com ou sem +55; validações avançadas podem vir depois.
         Value = digits;
     }
 
