@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Paschoalotto.People.Application.Abstractions;
 using Paschoalotto.People.Application.Abstractions.Repositories;
 using Paschoalotto.People.Infrastructure;
+using Paschoalotto.People.Infrastructure.Logging;
 using Paschoalotto.People.Infrastructure.Persistence;
 using Paschoalotto.People.Infrastructure.Repositories;
 using Paschoalotto.People.Infrastructure.Security;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IFileStorageService, FileSystemStorageService>();
         services.AddSingleton<ITokenService, JwtTokenService>();
+        services.AddSingleton<IAuditLogger, NLogAuditLogger>();
 
         return services;
     }

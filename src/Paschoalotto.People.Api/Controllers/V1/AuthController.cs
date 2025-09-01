@@ -12,12 +12,17 @@ public sealed class AuthController : ControllerBase
     private readonly IConfiguration _cfg;
     private readonly ITokenService _tokens;
     private readonly ILogger<AuthController> _logger;
+    private readonly IAuditLogger _audit;
 
-    public AuthController(IConfiguration cfg, ITokenService tokens, ILogger<AuthController> logger)
+    public AuthController(IConfiguration cfg, 
+        ITokenService tokens, 
+        IAuditLogger audit,
+        ILogger<AuthController> logger)
     {
         _cfg = cfg;
         _tokens = tokens;
         _logger = logger;
+        _audit = audit;
     }
 
     [AllowAnonymous]
@@ -38,6 +43,7 @@ public sealed class AuthController : ControllerBase
         }
 
         var token = _tokens.CreateToken(subject: u!, role: r);
+        _audit.Log("Login", "User", req.Username, null);
         return Ok(new LoginResponse
         {
             AccessToken = token,

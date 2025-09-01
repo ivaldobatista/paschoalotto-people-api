@@ -20,11 +20,14 @@ public sealed class PeopleController : ControllerBase
     private readonly IUnitOfWork _uow;
     private readonly ILogger<PeopleController> _logger;
     private readonly IFileStorageService _storage;
+    private readonly IAuditLogger _audit;
+
     public PeopleController(
         IPersonWriteRepository write,
         IPersonReadRepository read,
         IUnitOfWork uow,
         IFileStorageService storageService,
+        IAuditLogger audit,
         ILogger<PeopleController> logger)
     {
         _write = write;
@@ -32,6 +35,7 @@ public sealed class PeopleController : ControllerBase
         _uow = uow;
         _logger = logger;
         _storage = storageService;
+        _audit = audit;
     }
 
     // === POST /api/v1/individuals
@@ -60,6 +64,8 @@ public sealed class PeopleController : ControllerBase
 
             await _write.AddIndividualAsync(entity, ct);
             await _uow.SaveChangesAsync(ct);
+
+            _audit.Log("Create", "Individual", entity.Id.ToString(), new { entity.FullName });
 
             var resp = new IndividualResponse
             {
@@ -125,6 +131,7 @@ public sealed class PeopleController : ControllerBase
 
             await _write.AddLegalEntityAsync(entity, ct);
             await _uow.SaveChangesAsync(ct);
+            _audit.Log("Create", "LegalEntity", entity.Id.ToString(), new { entity.CorporateName });
 
             var resp = new LegalEntityResponse
             {
@@ -284,6 +291,7 @@ public sealed class PeopleController : ControllerBase
         if (!updated) return NotFound(new { error = "Pessoa física não encontrada." });
 
         await _uow.SaveChangesAsync(ct);
+        _audit.Log("UploadPhoto", "Individual", id.ToString(), new { path = relPath });
 
         var photoUrl = $"{Request.Scheme}://{Request.Host}/files/{relPath}";
         Response.Headers.Location = photoUrl;
@@ -307,6 +315,7 @@ public sealed class PeopleController : ControllerBase
         if (!updated) return NotFound(new { error = "Pessoa jurídica não encontrada." });
 
         await _uow.SaveChangesAsync(ct);
+        _audit.Log("UploadLogo", "LegalEntity", id.ToString(), new { path = relPath });
 
         var logoUrl = $"{Request.Scheme}://{Request.Host}/files/{relPath}";
         Response.Headers.Location = logoUrl;
