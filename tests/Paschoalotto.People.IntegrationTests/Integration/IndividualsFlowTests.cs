@@ -19,6 +19,9 @@ public class IndividualsFlowTests : IClassFixture<PeopleApiFactory>
     [Fact]
     public async Task Create_UploadPhoto_GetById_Should_Work()
     {
+        var token = await AuthTestHelper.LoginAndGetTokenAsync(_client, "admin", "123456");
+        _client.UseBearer(token);
+
         var body = new CreateIndividualRequest
         {
             FullName = "Maria Silva",

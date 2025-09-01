@@ -13,6 +13,9 @@ public class LegalEntitiesFlowTests : IClassFixture<PeopleApiFactory>
     [Fact]
     public async Task Create_UploadLogo_GetById_Should_Work()
     {
+        var token = await AuthTestHelper.LoginAndGetTokenAsync(_client, "admin", "123456");
+        _client.UseBearer(token);
+
         var body = new CreateLegalEntityRequest
         {
             CorporateName = "Acme LTDA",
