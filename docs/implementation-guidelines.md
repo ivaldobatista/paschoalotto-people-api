@@ -1,4 +1,4 @@
-# 📘 Diretrizes de Implementação – Paschoalotto.People.Api
+# Diretrizes de Implementação – Paschoalotto.People.Api
 
 ## 1. Arquitetura de Solução
 - **Camadas do Projeto:**
@@ -87,19 +87,3 @@
 
 - **Auditoria e Logs** devem ser armazenados em solução centralizada em ambientes reais (ex.: ELK, Loki, Seq).
 
----
-
-## 6. Diretrizes de Deploy
-- **Docker:**  
-  - Publicar imagem com multi-stage build (`dotnet publish` → runtime).
-- **Volumes:**  
-  - Montar `_storage` em volume persistente.
-- **Segredos:**  
-  - Substituir `Auth:Password` e `Jwt:Key` via variáveis de ambiente ou secret manager.
-
----
-
-# ✅ Próximos Passos
-1. Validar diretrizes em review interno.  
-2. Commitar este documento em `docs/implementation-guidelines.md`.  
-3. Manter versionamento junto com o código (pull requests que alterem arquitetura devem atualizar as diretrizes).  
