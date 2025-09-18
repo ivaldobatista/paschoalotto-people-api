@@ -25,6 +25,88 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 
 ````
 
+```mermaid 
+graph TD
+
+  %% ---------- Client ----------
+  subgraph client["Client"]
+    A[Usuário / Outro Serviço]
+  end
+
+  %% ---------- API Layer ----------
+  subgraph api["API Layer (Presentation)"]
+    B1[PeopleController]
+    B2[AuthController]
+  end
+
+  %% ---------- Application (Ports/Contracts) ----------
+  subgraph app["Application (Ports)"]
+    P1[IPersonReadRepository]
+    P2[IPersonWriteRepository]
+    P3[IUnitOfWork]
+    P4[IFileStorageService]
+    P5[ITokenService]
+    P6[IAuditLogger]
+  end
+
+  %% ---------- Infrastructure (Implementations) ----------
+  subgraph infra["Infrastructure (Implementations)"]
+    R1[PersonReadRepository]
+    R2[PersonWriteRepository]
+    U1[UnitOfWork]
+    S1[FileSystemStorageService]
+    T1[JwtTokenService]
+    L1[NLogAuditLogger]
+    D1[PeopleDbContext &#40;EF Core&#41;]
+  end
+
+  %% ---------- Database ----------
+  subgraph db["Database"]
+    DB[(SQLite)]
+  end
+
+  %% ---------- Flows ----------
+  A -->|HTTP| B1
+  A -->|HTTP| B2
+
+  %% PeopleController usa Ports
+  B1 --> P1
+  B1 --> P2
+  B1 --> P3
+  B1 --> P4
+  B1 --> P6
+
+  %% AuthController usa TokenService
+  B2 --> P5
+
+  %% Ports -> Implementations
+  P1 --> R1
+  P2 --> R2
+  P3 --> U1
+  P4 --> S1
+  P5 --> T1
+  P6 --> L1
+
+  %% Repos/UnitOfWork -> DbContext -> DB
+  R1 --> D1
+  R2 --> D1
+  U1 --> D1
+  D1 --> DB
+
+  %% Storage expõe arquivos para API
+  S1 -.-> B1
+
+  %% ---------- Styles ----------
+  style B1 fill:#f9f,stroke:#333,stroke-width:2px
+  style B2 fill:#f9f,stroke:#333,stroke-width:2px
+  style R1 fill:#9cf,stroke:#333,stroke-width:1.5px
+  style R2 fill:#9cf,stroke:#333,stroke-width:1.5px
+  style D1 fill:#f8d5a1,stroke:#333,stroke-width:1.5px
+
+``` 
+
+“Por que criamos cada classe/camada” (rationale didático)
+
 - **Idioma padrão no código**: Inglês (classes, métodos, propriedades).
 - **Idioma nos logs**: Português, para facilitar auditoria e troubleshooting local.
 - **Justificativa**: Inglês é universal para colaboração, bibliotecas e manutenção futura; português torna o suporte mais ágil para o time operacional.

@@ -8,7 +8,7 @@ public sealed class CreateIndividualRequest
     [Required, MaxLength(200)]
     public string FullName { get; set; } = null!;
 
-    [Required, MaxLength(14)] // 000.000.000-00
+    [Required, MaxLength(14)] 
     public string Cpf { get; set; } = null!;
 
     [Required]
