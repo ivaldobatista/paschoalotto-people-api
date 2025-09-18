@@ -27,39 +27,81 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 
 ```mermaid 
 graph TD
-    subgraph "Cliente (Client)"
-        A[Usuário / Outro Serviço]
-    end
 
-    subgraph "API Layer (Camada de Apresentação)"
-        B[PeopleController]
-    end
+  %% ---------- Client ----------
+  subgraph "Client"
+    A[Usuário / Outro Serviço]
+  end
 
-    subgraph "Business Logic Layer (Camada de Negócio)"
-        C[IPeopleService] -- Injetado em --> B
-        D[PeopleService] -- Implementa --> C
-    end
+  %% ---------- API Layer ----------
+  subgraph "API Layer (Presentation)"
+    B1[PeopleController]
+    B2[AuthController]
+  end
 
-    subgraph "Data Access Layer (Camada de Acesso a Dados)"
-        E[IPeopleRepository] -- Injetado em --> D
-        F[PeopleRepository] -- Implementa --> E
-    end
+  %% ---------- Application (Ports/Contracts) ----------
+  subgraph "Application (Ports)"
+    P1[IPersonReadRepository]
+    P2[IPersonWriteRepository]
+    P3[IUnitOfWork]
+    P4[IFileStorageService]
+    P5[ITokenService]
+    P6[IAuditLogger]
+  end
 
-    subgraph "Infrastructure (Infraestrutura)"
-        G[AppDbContext] -- Injetado em --> F
-        H[(SQLite Database)]
-    end
+  %% ---------- Infrastructure (Implementations) ----------
+  subgraph "Infrastructure (Implementations)"
+    R1[PersonReadRepository]
+    R2[PersonWriteRepository]
+    U1[UnitOfWork]
+    S1[FileSystemStorageService]
+    T1[JwtTokenService]
+    L1[NLogAuditLogger]
+    D1[PeopleDbContext (EF Core)]
+  end
 
-    A -- HTTP Request --> B
-    B -- Chama método de --> D
-    D -- Usa --> F
-    F -- Acessa via EF Core --> G
-    G -- Mapeia para --> H
+  %% ---------- Database ----------
+  subgraph "Database"
+    DB[(SQLite)]
+  end
 
-    style B fill:#f9f,stroke:#333,stroke-width:2px
-    style D fill:#ccf,stroke:#333,stroke-width:2px
-    style F fill:#9cf,stroke:#333,stroke-width:2px
-    style G fill:#f8d5a1,stroke:#333,stroke-width:2px
+  %% ---------- Flows ----------
+  A -->|HTTP| B1
+  A -->|HTTP| B2
+
+  %% PeopleController usa Ports
+  B1 --> P1
+  B1 --> P2
+  B1 --> P3
+  B1 --> P4
+  B1 --> P6
+
+  %% AuthController usa TokenService
+  B2 --> P5
+
+  %% Ports -> Implementations
+  P1 --> R1
+  P2 --> R2
+  P3 --> U1
+  P4 --> S1
+  P5 --> T1
+  P6 --> L1
+
+  %% Repos/UnitOfWork -> DbContext -> DB
+  R1 --> D1
+  R2 --> D1
+  U1 --> D1
+  D1 --> DB
+
+  %% Storage expõe arquivos para API
+  S1 -. serve files .- B1
+
+  %% ---------- Styles ----------
+  style B1 fill:#f9f,stroke:#333,stroke-width:2px
+  style B2 fill:#f9f,stroke:#333,stroke-width:2px
+  style R1 fill:#9cf,stroke:#333,stroke-width:1.5px
+  style R2 fill:#9cf,stroke:#333,stroke-width:1.5px
+  style D1 fill:#f8d5a1,stroke:#333,stroke-width:1.5px
 
 ``` 
 
