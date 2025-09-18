@@ -104,7 +104,6 @@ try
 }
 catch (Exception ex)
 {
-    // last-chance logging (startup crash)
     logger.Error(ex, "Stopped program because of exception");
     throw;
 }

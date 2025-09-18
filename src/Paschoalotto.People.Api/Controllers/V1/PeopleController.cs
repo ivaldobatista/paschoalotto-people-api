@@ -38,7 +38,6 @@ public sealed class PeopleController : ControllerBase
         _audit = audit;
     }
 
-    // === POST /api/v1/individuals
     [HttpPost("individuals")]
     [ProducesResponseType(typeof(IndividualResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -102,7 +101,6 @@ public sealed class PeopleController : ControllerBase
         }
     }
 
-    // === POST /api/v1/legal-entities
     [HttpPost("legal-entities")]
     [ProducesResponseType(typeof(LegalEntityResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -171,7 +169,6 @@ public sealed class PeopleController : ControllerBase
         }
     }
 
-    // === GET /api/v1/people/{id}
     [HttpGet("people/{id:guid}")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -237,7 +234,6 @@ public sealed class PeopleController : ControllerBase
         return NotFound();
     }
 
-    // === GET /api/v1/people/search?name=...
     [HttpGet("people/search")]
     [ProducesResponseType(typeof(IEnumerable<PersonSummaryResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Search([FromQuery] string name, CancellationToken ct)

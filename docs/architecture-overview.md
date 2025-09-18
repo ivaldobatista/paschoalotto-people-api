@@ -101,6 +101,42 @@ flowchart LR
 
   ```
 
+graph TD
+    subgraph "Cliente (Client)"
+        A[Usuário / Outro Serviço]
+    end
+
+    subgraph "API Layer (Camada de Apresentação)"
+        B[PeopleController]
+    end
+
+    subgraph "Business Logic Layer (Camada de Negócio)"
+        C[IPeopleService] -- Injetado em --> B
+        D[PeopleService] -- Implementa --> C
+    end
+
+    subgraph "Data Access Layer (Camada de Acesso a Dados)"
+        E[IPeopleRepository] -- Injetado em --> D
+        F[PeopleRepository] -- Implementa --> E
+    end
+
+    subgraph "Infrastructure (Infraestrutura)"
+        G[AppDbContext] -- Injetado em --> F
+        H[(PostgreSQL Database)]
+    end
+
+    A -- HTTP Request --> B
+    B -- Chama método de --> D
+    D -- Usa --> F
+    F -- Acessa via EF Core --> G
+    G -- Mapeia para --> H
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+    style F fill:#9cf,stroke:#333,stroke-width:2px
+    style G fill:#f8d5a1,stroke:#333,stroke-width:2px
+
+
 “Por que criamos cada classe/camada” (rationale didático)
 
 - **Idioma padrão no código**: Inglês (classes, métodos, propriedades).

@@ -10,7 +10,7 @@ public sealed class CreateLegalEntityRequest
     [Required, MaxLength(200)]
     public string TradeName { get; set; } = null!;
 
-    [Required, MaxLength(18)] // 00.000.000/0000-00
+    [Required, MaxLength(18)] 
     public string Cnpj { get; set; } = null!;
 
     [MaxLength(40)]
