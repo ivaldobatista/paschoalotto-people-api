@@ -26,81 +26,6 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 ````
 
 ```mermaid 
-
-flowchart LR
-  %% Contexto: Clean Architecture + DDD + JWT + Upload de Imagens
-  %% Fronteiras e contratos explícitos para baixo acoplamento e alta coesão
-
-  subgraph Presentation ["Presentation - API ASP.NET Core"]
-    C1["Controllers: People, Companies, Auth, Upload"]
-    F1["Filters & Middleware: Exception, Validation, CorrelationId, ProblemDetails, RateLimit"]
-    DTO["DTOs (Request/Response Contracts)"]
-    MAP1["Mapping Profiles"]
-  end
-
-  subgraph Application ["Application Layer"]
-    CQRS["CQRS: Commands & Queries"]
-    HND["Handlers (MediatR)"]
-    VAL["Validators (FluentValidation)"]
-    SVC["Application Services (Use Case Orchestration)"]
-    PORTS["Ports (Interfaces): IIdentityService, IImageStorage, IPersonRepository, IUnitOfWork"]
-    EV["Domain Events Dispatcher"]
-  end
-
-  subgraph Domain ["Domain Layer"]
-    ENT["Entities/Aggregates: Person, Company"]
-    VO["Value Objects: Cpf, Cnpj, Email, Address"]
-    POL["Policies & Invariants"]
-    DOMEV["Domain Events"]
-  end
-
-  subgraph Infrastructure ["Infrastructure Layer"]
-    DB["EF Core DbContext & Migrations"]
-    REPO["Repositories (PersonRepository, CompanyRepository)"]
-    IDP["Identity/JWT Provider (TokenService, PasswordHasher)"]
-    STORE["Image Storage Adapter (Local/S3)"]
-    LOG["Logging (NLog/Serilog)"]
-    OUTBOX["Outbox & Bus (future)"]
-  end
-
-  subgraph CrossCutting ["Cross-Cutting"]
-    CONF["Configuration & Options"]
-    OBS["Observability: HealthChecks, Metrics, Tracing"]
-  end
-
-  subgraph Tests ["Tests"]
-    UT["Unit Tests (xUnit + FluentAssertions)"]
-    IT["Integration Tests (WebApplicationFactory)"]
-  end
-
-  %% Fluxos
-  C1 -->|HTTP/JSON| DTO --> MAP1
-  MAP1 --> CQRS
-  F1 --> C1
-
-  CQRS --> HND --> SVC --> PORTS
-  PORTS --> REPO --> DB
-  PORTS --> IDP
-  PORTS --> STORE
-
-  HND -->|Domain Ops| ENT
-  ENT --> DOMEV --> EV --> HND
-
-  LOG -.-> Presentation
-  LOG -.-> Application
-  LOG -.-> Infrastructure
-
-  OBS -.-> Presentation
-  OBS -.-> Application
-  OBS -.-> Infrastructure
-
-  UT --> Domain
-  UT --> Application
-  IT --> Presentation
-
-
-  ```
-
 graph TD
     subgraph "Cliente (Client)"
         A[Usuário / Outro Serviço]
@@ -136,6 +61,7 @@ graph TD
     style F fill:#9cf,stroke:#333,stroke-width:2px
     style G fill:#f8d5a1,stroke:#333,stroke-width:2px
 
+``` 
 
 “Por que criamos cada classe/camada” (rationale didático)
 
