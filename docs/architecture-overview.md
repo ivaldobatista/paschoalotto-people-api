@@ -29,18 +29,18 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 graph TD
 
   %% ---------- Client ----------
-  subgraph "Client"
+  subgraph client["Client"]
     A[Usuário / Outro Serviço]
   end
 
   %% ---------- API Layer ----------
-  subgraph "API Layer (Presentation)"
+  subgraph api["API Layer (Presentation)"]
     B1[PeopleController]
     B2[AuthController]
   end
 
   %% ---------- Application (Ports/Contracts) ----------
-  subgraph "Application (Ports)"
+  subgraph app["Application (Ports)"]
     P1[IPersonReadRepository]
     P2[IPersonWriteRepository]
     P3[IUnitOfWork]
@@ -50,18 +50,18 @@ graph TD
   end
 
   %% ---------- Infrastructure (Implementations) ----------
-  subgraph "Infrastructure (Implementations)"
+  subgraph infra["Infrastructure (Implementations)"]
     R1[PersonReadRepository]
     R2[PersonWriteRepository]
     U1[UnitOfWork]
     S1[FileSystemStorageService]
     T1[JwtTokenService]
     L1[NLogAuditLogger]
-    D1[PeopleDbContext (EF Core)]
+    D1[PeopleDbContext &#40;EF Core&#41;]
   end
 
   %% ---------- Database ----------
-  subgraph "Database"
+  subgraph db["Database"]
     DB[(SQLite)]
   end
 
@@ -94,7 +94,7 @@ graph TD
   D1 --> DB
 
   %% Storage expõe arquivos para API
-  S1 -. serve files .- B1
+  S1 -.-> B1
 
   %% ---------- Styles ----------
   style B1 fill:#f9f,stroke:#333,stroke-width:2px
