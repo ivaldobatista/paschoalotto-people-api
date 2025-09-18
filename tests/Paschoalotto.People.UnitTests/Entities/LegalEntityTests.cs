@@ -4,6 +4,9 @@ using Paschoalotto.People.Domain.People;
 using Paschoalotto.People.Domain.People.ValueObjects;
 using Xunit;
 
+
+namespace Paschoalotto.People.UnitTests.Entities;
+
 public class LegalEntityTests
 {
     [Fact]

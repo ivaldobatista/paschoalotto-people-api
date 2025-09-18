@@ -8,7 +8,7 @@ public sealed class PhoneNumber : ValueObject
 {
     public string Value { get; }
 
-    private PhoneNumber() { Value = string.Empty; } // EF
+    private PhoneNumber() { Value = string.Empty; } 
     public PhoneNumber(string value)
     {
         var digits = Regex.Replace(value ?? string.Empty, "[^0-9+]", "").Trim();

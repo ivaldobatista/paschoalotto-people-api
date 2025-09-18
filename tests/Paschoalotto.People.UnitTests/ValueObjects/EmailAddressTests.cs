@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Paschoalotto.People.Domain.People.ValueObjects;
 
+namespace Paschoalotto.People.UnitTests.ValueObjects;
 public class EmailAddressTests
 {
     [Theory]
