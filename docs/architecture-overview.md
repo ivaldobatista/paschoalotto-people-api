@@ -31,46 +31,46 @@ flowchart LR
   %% Contexto: Clean Architecture + DDD + JWT + Upload de Imagens
   %% Fronteiras e contratos explícitos para baixo acoplamento e alta coesão
 
-  subgraph Presentation [Presentation / API (ASP.NET Core)]
-    C1[PeopleController\nCompaniesController\nAuthController\nUploadController]
-    F1[Filters & Middleware\n(Exception, Validation, CorrelationId,\nProblemDetails, RateLimit)]
-    DTO[Request/Response DTOs\n(Contracts)]
-    MAP1[Mapping Profiles]
+  subgraph Presentation ["Presentation - API ASP.NET Core"]
+    C1["Controllers: People, Companies, Auth, Upload"]
+    F1["Filters & Middleware: Exception, Validation, CorrelationId, ProblemDetails, RateLimit"]
+    DTO["DTOs (Request/Response Contracts)"]
+    MAP1["Mapping Profiles"]
   end
 
-  subgraph Application [Application Layer]
-    CQRS[CQRS: Commands & Queries]
-    HND[Handlers (MediatR)]
-    VAL[Validators (FluentValidation)]
-    SVC[Application Services\n(Orquestra Regra de Caso de Uso)]
-    PORTS[Ports (Interfaces)\n e.g. IIdentityService, IImageStorage,\n IPersonRepository, IUnitOfWork]
-    EV[Domain Events Dispatcher]
+  subgraph Application ["Application Layer"]
+    CQRS["CQRS: Commands & Queries"]
+    HND["Handlers (MediatR)"]
+    VAL["Validators (FluentValidation)"]
+    SVC["Application Services (Use Case Orchestration)"]
+    PORTS["Ports (Interfaces): IIdentityService, IImageStorage, IPersonRepository, IUnitOfWork"]
+    EV["Domain Events Dispatcher"]
   end
 
-  subgraph Domain [Domain Layer]
-    ENT[Entities/Aggregates:\nPerson, Company]
-    VO[Value Objects:\nDocument(CPF/CNPJ), Address, Email]
-    POL[Policies & Invariants]
-    DOMEV[Domain Events]
+  subgraph Domain ["Domain Layer"]
+    ENT["Entities/Aggregates: Person, Company"]
+    VO["Value Objects: Cpf, Cnpj, Email, Address"]
+    POL["Policies & Invariants"]
+    DOMEV["Domain Events"]
   end
 
-  subgraph Infrastructure [Infrastructure Layer]
-    DB[(EF Core DbContext\nMigrations)]
-    REPO[Repositories\n(PersonRepository, CompanyRepository)]
-    IDP[Identity/JWT Provider\n(TokenService, PasswordHasher)]
-    STORE[Image Storage Adapter\n(e.g. Local/S3-compatible)]
-    LOG[Logging (NLog/Serilog)]
-    OUTBOX[Outbox & Bus (opcional)]
+  subgraph Infrastructure ["Infrastructure Layer"]
+    DB["EF Core DbContext & Migrations"]
+    REPO["Repositories (PersonRepository, CompanyRepository)"]
+    IDP["Identity/JWT Provider (TokenService, PasswordHasher)"]
+    STORE["Image Storage Adapter (Local/S3)"]
+    LOG["Logging (NLog/Serilog)"]
+    OUTBOX["Outbox & Bus (future)"]
   end
 
-  subgraph CrossCutting [Cross-Cutting]
-    CONF[Configuration & Options]
-    OBS[Observability: HealthChecks,\nMetrics, Tracing]
+  subgraph CrossCutting ["Cross-Cutting"]
+    CONF["Configuration & Options"]
+    OBS["Observability: HealthChecks, Metrics, Tracing"]
   end
 
-  subgraph Tests [Tests]
-    UT[xUnit + FluentAssertions\nUnit Tests]
-    IT[WebApplicationFactory\nIntegration/E2E]
+  subgraph Tests ["Tests"]
+    UT["Unit Tests (xUnit + FluentAssertions)"]
+    IT["Integration Tests (WebApplicationFactory)"]
   end
 
   %% Fluxos
@@ -86,17 +86,19 @@ flowchart LR
   HND -->|Domain Ops| ENT
   ENT --> DOMEV --> EV --> HND
 
-  LOG -. cross .- Presentation
-  LOG -. cross .- Application
-  LOG -. cross .- Infrastructure
+  LOG -.-> Presentation
+  LOG -.-> Application
+  LOG -.-> Infrastructure
 
-  OBS -. monitor .- Presentation
-  OBS -. monitor .- Application
-  OBS -. monitor .- Infrastructure
+  OBS -.-> Presentation
+  OBS -.-> Application
+  OBS -.-> Infrastructure
 
   UT --> Domain
   UT --> Application
   IT --> Presentation
+
+
   ```
 
 “Por que criamos cada classe/camada” (rationale didático)
