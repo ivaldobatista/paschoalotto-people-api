@@ -25,6 +25,7 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 
 ````
 
+```mermaid 
 
 flowchart LR
   %% Contexto: Clean Architecture + DDD + JWT + Upload de Imagens
@@ -96,7 +97,9 @@ flowchart LR
   UT --> Domain
   UT --> Application
   IT --> Presentation
+  ```
 
+“Por que criamos cada classe/camada” (rationale didático)
 
 - **Idioma padrão no código**: Inglês (classes, métodos, propriedades).
 - **Idioma nos logs**: Português, para facilitar auditoria e troubleshooting local.
