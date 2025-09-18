@@ -26,69 +26,40 @@ Este documento descreve a arquitetura de referência do projeto, servindo como g
 ````
 
 ```mermaid 
-flowchart LR
-  %% Paschoalotto.People - .NET 9 - Clean Architecture (pragmática)
-  %% Fiel ao código: Controllers -> Repos/Services (sem MediatR/CQRS)
+graph TD
+    subgraph "Cliente (Client)"
+        A[Usuário / Outro Serviço]
+    end
 
-  subgraph Presentation ["Presentation (Paschoalotto.People.Api)"]
-    CAuth["AuthController (Login)"]
-    CPeople["PeopleController (PF/PJ + Uploads + Query)"]
-    DTOs["Contracts DTOs (Requests/Responses)"]
-    Program["Program.cs (Swagger, JWT, Static Files /files)"]
-  end
+    subgraph "API Layer (Camada de Apresentação)"
+        B[PeopleController]
+    end
 
-  subgraph CrossCutting ["CrossCutting (DI)"]
-    DI["DependencyInjection.AddPeoplePlatform()"]
-  end
+    subgraph "Business Logic Layer (Camada de Negócio)"
+        C[IPeopleService] -- Injetado em --> B
+        D[PeopleService] -- Implementa --> C
+    end
 
-  subgraph Application ["Application (Abstractions/Ports)"]
-    PortsRepo["IPersonReadRepository / IPersonWriteRepository"]
-    PortsInfra["IUnitOfWork • IFileStorageService • ITokenService • IAuditLogger"]
-  end
+    subgraph "Data Access Layer (Camada de Acesso a Dados)"
+        E[IPeopleRepository] -- Injetado em --> D
+        F[PeopleRepository] -- Implementa --> E
+    end
 
-  subgraph Domain ["Domain"]
-    Entities["Entities:\nIndividual, LegalEntity (herdam Person)"]
-    VOs["Value Objects:\nCpf, Cnpj, EmailAddress, PhoneNumber, Address"]
-    Base["EntityBase, ValueObject"]
-    Enums["GenderType"]
-  end
+    subgraph "Infrastructure (Infraestrutura)"
+        G[AppDbContext] -- Injetado em --> F
+        H[(SQLite Database)]
+    end
 
-  subgraph Infrastructure ["Infrastructure"]
-    Db["PeopleDbContext (EF Core) + Migrations"]
-    Repos["PersonReadRepository • PersonWriteRepository"]
-    UoW["UnitOfWork"]
-    Storage["FileSystemStorageService (_storage)"]
-    Jwt["JwtTokenService"]
-    Audit["NLogAuditLogger"]
-    Seed["SeedData (on startup)"]
-  end
+    A -- HTTP Request --> B
+    B -- Chama método de --> D
+    D -- Usa --> F
+    F -- Acessa via EF Core --> G
+    G -- Mapeia para --> H
 
-  subgraph Tests ["Tests"]
-    UT["UnitTests: VOs e Entidades"]
-    IT["IntegrationTests: Fluxos PF/PJ + Upload + Auth"]
-  end
-
-  %% Fluxos principais
-  CAuth -->|Login| PortsInfra
-  CPeople -->|Create/Search/Get/Upload| PortsRepo
-  CPeople -->|Salvar/Commit| PortsInfra
-  Presentation -->|DI| CrossCutting
-  CrossCutting --> Application
-  Application -->|impl| Infrastructure
-  Repos --> Db
-  UoW --> Db
-  Storage --> Presentation
-  Jwt --> Presentation
-  Audit -. logs .- Presentation
-  Audit -. logs .- Infrastructure
-
-  %% Domínio consumido por infra e presentation
-  Infrastructure --> Domain
-  Presentation --> Domain
-
-  %% Testes
-  UT --> Domain
-  IT --> Presentation
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+    style F fill:#9cf,stroke:#333,stroke-width:2px
+    style G fill:#f8d5a1,stroke:#333,stroke-width:2px
 
 ``` 
 
