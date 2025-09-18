@@ -9,7 +9,7 @@ public sealed class EmailAddress : ValueObject
 {
     public string Value { get; }
 
-    private EmailAddress() { Value = string.Empty; } // EF
+    private EmailAddress() { Value = string.Empty; } 
     public EmailAddress(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

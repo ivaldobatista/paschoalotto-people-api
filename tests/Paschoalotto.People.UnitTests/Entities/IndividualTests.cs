@@ -3,6 +3,8 @@ using Paschoalotto.People.Domain.People;
 using Paschoalotto.People.Domain.People.Enums;
 using Paschoalotto.People.Domain.People.ValueObjects;
 
+namespace Paschoalotto.People.UnitTests.Entities;
+
 public class IndividualTests
 {
     [Fact]
